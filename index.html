@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id="randomInput" class="form-control" type="text">
+                    <button onclick="generateRandom()" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input class="form-control" id="writeInput" type="text">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div class="calc-button-row">
+                              <div onclick="writeIntoInput(7)" id="digit7" class="button">7</div>
+                              <div onclick="writeIntoInput(8)" id="digit8" class="button">8</div>
+                              <div onclick="writeIntoInput(9)" id="digit9" class="button">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div onclick="writeIntoInput(4)" id="digit4" class="button">4</div>
+                              <div onclick="writeIntoInput(5)" id="digit5" class="button">5</div>
+                              <div onclick="writeIntoInput(6)" id="digit6" class="button">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div onclick="writeIntoInput(1)" id="digit1" class="button">1</div>
+                              <div onclick="writeIntoInput(2)" id="digit2" class="button">2</div>
+                              <div onclick="writeIntoInput(3)" id="digit3" class="button">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div class="button" id="Delete" onclick="deleteDigit()"><</div>
+                                <div onclick="writeIntoInput(0)" id="digit0" class="button">0</div>
+                                <div class="button" id="Clear" onclick="clearDigit()">C</div>
+                            </div>
+                            <div>
+                                <button type="submit" class="submit-btn" onclick="compare()">Submit</button>
+                                <p class="action-left"><span id="tryCount">3</span> try left</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notify-section">
+            <p class="notify" id="notifyNotMatched">❌ Pin Didn't Match, Please try again</p>
+            <p class="notify" id="notifyMatched">✅ Pin Matched... Secret door is opening for you</p>
+        </div>
+    </div>
+    <script>
+        function generateRandom()//generates pin
+        {
+            const randomPin = Math.floor(1000+Math.random()*9000);//to generate 4 digits
+            //console.log(randomPin);
+            document.getElementById("randomInput").value = randomPin;
+        }
+        function writeIntoInput(number)//writes in input box
+        {
+            const digitbtn = document.getElementById("digit"+number).innerText;
+            document.getElementById("writeInput").value = document.getElementById("writeInput").value+digitbtn;//adds with previous string
+        }
+        function compare()//checks if inputed number matches with pin
+        {
+            const writeInputText = document.getElementById("writeInput").value;
+            const writeInputNumber = parseFloat(writeInputText);//converting to number
+            const randomInputText = document.getElementById("randomInput").value;
+            const randomInputNumber = parseFloat(randomInputText);//converting to number
+            if(randomInputNumber == writeInputNumber)//if matches,then displays
+            {
+                document.getElementById("notifyMatched").style.display = "block";
+                document.getElementById("notifyNotMatched").style.display = "none";
+                //if matches,both pin and inputed value will vanish
+                document.getElementById("writeInput").value = "";
+                document.getElementById("randomInput").value = "";
+                //if matches,then again try becomes 3
+                const tryRemaining = document.getElementById("tryCount").innerText;
+                let tryRemainingNum = parseInt(tryRemaining);
+                tryRemainingNum = 3;
+                document.getElementById("tryCount").innerText = tryRemainingNum;
+            }
+            else//if doesn't match,then displays
+            {
+                document.getElementById("notifyNotMatched").style.display = "block";
+                document.getElementById("notifyMatched").style.display = "none";
+                document.getElementById("writeInput").value = "";//if doesn't match,inputed value will vanish
+                //checking for try
+                const tryRemaining = document.getElementById("tryCount").innerText;
+                let tryRemainingNum = parseInt(tryRemaining);
+                tryRemainingNum--;//if doesn't match,try decreases by 1
+                if(tryRemainingNum == 0)//if try becomes 0,then the pin will vanish and again try will become 3
+                {
+                    document.getElementById("randomInput").value = "";
+                    tryRemainingNum = 3;
+                    document.getElementById("notifyNotMatched").style.display = "none";
+                }
+                document.getElementById("tryCount").innerText = tryRemainingNum;
+            }
+        }
+        function deleteDigit()//deletes 1 character
+        {
+            const writeInputText = document.getElementById("writeInput").value;
+            const end = writeInputText.length-1;
+            document.getElementById("writeInput").value = writeInputText.slice(0,end);
+
+        }
+        function clearDigit()//clears input box
+        {
+            document.getElementById("writeInput").value = ""; 
+        }
+    </script>
+</body>
+</html>
